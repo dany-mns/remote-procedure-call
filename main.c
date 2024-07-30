@@ -25,14 +25,13 @@ void init_serialized_buffer(serialized_buffer *buff) {
 }
 
 void serialize_date(serialized_buffer *buff, char *data, int nbytes) {
-    // Have space
     printf("We have %d/%d bytes free space, and size of data to be copied is %d bytes \n", (buff->size - buff->next), buff->size, nbytes);
+    
     if(buff->size - buff->next < nbytes) {
-        printf("Allocate more space.");
-        uint32_t required_size = 0;
-        // while()
-        // TODO compute required data
-        buff->starting_address = (char *)realloc(buff->starting_address, buff->size + BUFFER_DEFAULT_SIZE);
+        printf("Allocate more space.\n");
+        uint32_t required_size = (nbytes + (BUFFER_DEFAULT_SIZE - 1)) / BUFFER_DEFAULT_SIZE;
+        buff->size = buff->size + (required_size * BUFFER_DEFAULT_SIZE);
+        buff->starting_address = (char *)realloc(buff->starting_address, buff->size);
     } 
 
     memcpy(buff->starting_address + buff->next, data, nbytes);
@@ -46,5 +45,6 @@ int main() {
     sbuff->starting_address[0] = 'A';
     sbuff->next += 1;
     serialize_date(sbuff, "B", 1);
+    serialize_date(sbuff, "C", 1);
     return 0;
 }
